@@ -1,0 +1,55 @@
+game:
+  name: poker
+  lazy-collections: ${GAME_SERVICE_LAZY_COLLECTIONS:false}
+
+util:
+  lazy-eval-set.update-interval: ${GAME_SERVICE_LAZY_INTERVAL:500}
+
+spring:
+  profiles:
+    active: ${CIMS_PROFILE:development}
+
+  sql:
+    init:
+      mode: always
+  data:
+    mongodb:
+      uri: ${GAME_SERVICE_MONGO_URI:mongodb://gti:cavalloStanco@localhost:27018/db_gti?retryWrites=true&w=majority&authSource=admin}
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: ${GAME_SERVICE_POSTGRES_URI:jdbc:postgresql://localhost:5432/db_gti?user=gti&password=cavalloStanco}
+
+jwt:
+  secret: ${JWT_SECRET:3e39e7571fae2b80b7e68e8781f617e2}
+
+grpc:
+  client:
+    inventory-service:
+      address: ${INVENTORY_SERVICE_GRPC_ENDPOINT:localhost:9000}
+      negotiation-type: PLAINTEXT
+
+logging:
+  level:
+    root: ${LOG_LEVEL:DEBUG}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: development
+
+server:
+  port: 8085
+
+logging:
+  level:
+    root: INFO

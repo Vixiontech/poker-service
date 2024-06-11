@@ -1,0 +1,54 @@
+# --------- TYPES --------- #
+
+type PokerGameMessage implements GameMessage {
+  currentPhaseNumber: Int!
+  currentGameStatus: GameStatus!
+  messageTimestamp: DateTime!
+  userName: String
+  csv: String!
+  players: [ValuePokerPlayer]
+}
+
+enum PokerChipColor {
+}
+
+type ValuePokerPlayer implements GamePlayer {
+  number: Int!
+  betTotalValue: Float!
+  payoutTotalValue: Float!
+  csvLine: String!
+  rakePercentage: Float
+  progressive: Float
+  houseHold: Float
+  royalFlush: Float
+  straightFlush: Float
+  fourOfAKind: Float
+}
+
+type PokerGame implements Game {
+  id: ID!
+  tableName: String!
+  status: GameStatus!
+  history: [PokerGameMessage!]!
+  lastMessage: PokerGameMessage!
+  createdAt: DateTime @toClientTimezone
+  updatedAt: DateTime @toClientTimezone
+}
+
+type PokerGamePagedResponse implements GamePagedResponse {
+  items: [PokerGame!]!
+  pageNumber: Int!
+  totalElements: Int!
+}
+
+type GenericTable implements Table @key(fields: "name") @extends {
+  name: ID! @external
+  pokerGames(pageRequest: PageInput!): PokerGamePagedResponse!
+}
+
+# --------- SCHEMA CONFIG --------- #
+
+type Query {
+  pokerGames(pageRequest: PageInput!): PokerGamePagedResponse!
+  pokerGamesByTable(tableName: String! pageRequest: PageInput!): PokerGamePagedResponse!
+}
